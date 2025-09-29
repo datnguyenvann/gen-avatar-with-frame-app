@@ -232,8 +232,24 @@
           </div>
         </div>
 
-        <!-- Frame Gallery Section -->
+        <!-- Fixed Frame Info Section -->
         <div class="section">
+          <h3>🖼️ Khung cố định</h3>
+          <div style="text-align: center; color: #666; margin-bottom: 15px;">
+            <p>Sử dụng file khung local: <code>frame.svg</code></p>
+            <small>Đặt file khung trong cùng thư mục với index.html</small>
+            <small style="display: block; margin-top: 8px; color: #28a745;">✅ File mẫu đã được tạo sẵn</small>
+          </div>
+          <div style="text-align: center;">
+            <button onclick="toggleFrame()" class="btn btn-secondary" id="frameToggle">
+              <span>👁️</span>
+              <span>Tắt khung</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Frame Gallery Section -->
+        <!-- <div class="section">
           <h3>🖼️ Chọn khung có sẵn</h3>
           <div class="frame-gallery">
             <div class="frame-option" data-frame="circular" style="background: linear-gradient(45deg, #ff6b6b, #ff8e53); border-radius: 50%;" title="Khung tròn"></div>
@@ -243,10 +259,10 @@
             <div class="frame-option" data-frame="hexagon" style="background: linear-gradient(45deg, #a8edea, #fed6e3); clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);" title="Khung lục giác"></div>
             <div class="frame-option" data-frame="rounded" style="background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 20px;" title="Khung bo góc"></div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Upload Custom Frame Section -->
-        <div class="section upload-section">
+        <!-- <div class="section upload-section">
           <h3>📁 Khung tùy chỉnh</h3>
           <div class="file-input-wrapper">
             <input type="file" id="frameUpload" class="file-input" accept="image/*">
@@ -255,7 +271,7 @@
               <span>Tải khung lên</span>
             </button>
           </div>
-        </div>
+        </div> -->
 
         <!-- Controls Section -->
         <div class="section">
@@ -320,9 +336,34 @@
     let lastMouseX = 0;
     let lastMouseY = 0;
 
+    // Khung cố định - sử dụng file local
+    // Đặt file khung trong cùng thư mục với index.html
+    const FIXED_FRAME_URL = "./frame.svg"; // Thay bằng tên file khung của bạn (có thể là .png, .jpg, .svg)
+    
+    // Tải khung cố định ngay khi trang load
+    frameImg.src = FIXED_FRAME_URL;
+    // Không cần crossOrigin cho file local
+
     // Khung PNG trong suốt (thay link ảnh PNG của bạn)
     // frameImg.src = "https://i.ibb.co/5RMRM2P/sample-frame.png";
     // frameImg.src = "https://drive.google.com/file/d/1oQHmE3C98oYSJhxtByJXoZyxE1SyIap7/view?usp=sharing"; 
+
+    // Biến để kiểm soát hiển thị khung
+    let showFrame = true;
+
+    // Hàm toggle khung
+    function toggleFrame() {
+      showFrame = !showFrame;
+      const toggleBtn = document.getElementById('frameToggle');
+      if (showFrame) {
+        toggleBtn.innerHTML = '<span>👁️</span><span>Tắt khung</span>';
+        frameImgLoaded = true;
+      } else {
+        toggleBtn.innerHTML = '<span>🚫</span><span>Bật khung</span>';
+        frameImgLoaded = false;
+      }
+      draw();
+    } 
 
     // Xử lý click vào khung có sẵn
     document.querySelectorAll('.frame-option').forEach(frameOption => {
@@ -444,7 +485,16 @@
     // Thiết lập sự kiện onload cho frame mặc định
     frameImg.onload = function() {
       frameImgLoaded = true;
+      console.log('Fixed frame loaded successfully');
       draw();
+    };
+    
+    frameImg.onerror = function() {
+      console.error('Failed to load local frame:', FIXED_FRAME_URL);
+      console.log('Hãy đảm bảo file khung đã được đặt trong cùng thư mục với index.html');
+      frameImgLoaded = false;
+      // Thử load frame backup nếu frame chính bị lỗi
+      frameImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Ccircle cx='250' cy='250' r='240' fill='none' stroke='%23ff6b6b' stroke-width='20'/%3E%3C/svg%3E";
     };
 
     function draw() {
@@ -466,8 +516,8 @@
         }
       }
       
-      // Vẽ khung từ file (nếu có)
-      if (frameImgLoaded && frameImg.complete) {
+      // Vẽ khung từ file (nếu có và đang bật)
+      if (frameImgLoaded && frameImg.complete && showFrame) {
         ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
       }
     }
