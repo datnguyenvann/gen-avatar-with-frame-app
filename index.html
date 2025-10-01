@@ -436,6 +436,12 @@
     canvas.addEventListener('mouseup', endDrag);
     canvas.addEventListener('mouseleave', endDrag);
 
+    // Canvas touch events for mobile
+    canvas.addEventListener('touchstart', startTouchDrag, { passive: false });
+    canvas.addEventListener('touchmove', touchDrag, { passive: false });
+    canvas.addEventListener('touchend', endDrag);
+    canvas.addEventListener('touchcancel', endDrag);
+
     // Slider events
     document.getElementById('scaleSlider').addEventListener('input', function(e) {
       imgScale = parseFloat(e.target.value);
@@ -486,6 +492,34 @@
 
     function endDrag() {
       isDragging = false;
+    }
+
+    // Touch event handlers for mobile
+    function startTouchDrag(e) {
+      e.preventDefault(); // Prevent scrolling
+      if (!userImgLoaded) return;
+      isDragging = true;
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      lastMouseX = touch.clientX - rect.left;
+      lastMouseY = touch.clientY - rect.top;
+    }
+
+    function touchDrag(e) {
+      e.preventDefault(); // Prevent scrolling
+      if (!isDragging || !userImgLoaded) return;
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      const touchX = touch.clientX - rect.left;
+      const touchY = touch.clientY - rect.top;
+      
+      imgX += touchX - lastMouseX;
+      imgY += touchY - lastMouseY;
+      
+      lastMouseX = touchX;
+      lastMouseY = touchY;
+      
+      draw();
     }
 
     function downloadImage() {
