@@ -203,11 +203,98 @@
       border-left: 4px solid #2196f3;
     }
     @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      .container {
+        border-radius: 15px;
+      }
+      .header {
+        padding: 20px 15px;
+      }
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      .main-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        padding: 20px 15px;
+      }
+      .left-panel {
+        gap: 15px;
+      }
+      .right-panel {
+        gap: 15px;
+      }
+      .section {
+        padding: 15px 10px;
+      }
+      .section h3 {
+        font-size: 1rem;
+        margin: 0 0 15px 0;
+      }
+      canvas {
+        width: 100%;
+        max-width: 280px;
+        height: auto;
+      }
+      .control-row {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+      }
+      .slider {
+        width: 100%;
+        min-height: 40px;
+      }
+      .value-display {
+        text-align: center;
+        min-width: auto;
+        font-size: 14px;
+      }
+      .button-group {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 15px;
+        font-size: 14px;
+      }
+      .file-button {
+        padding: 12px 15px;
+        font-size: 14px;
+      }
+      .help-text {
+        font-size: 12px;
+        padding: 12px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
       .main-content {
         grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 15px 10px;
       }
-      .frame-gallery {
-        grid-template-columns: repeat(2, 1fr);
+      .left-panel {
+        order: 2;
+      }
+      .right-panel {
+        order: 1;
+      }
+      .section {
+        padding: 12px 8px;
+      }
+      canvas {
+        max-width: 250px;
+      }
+      .header h1 {
+        font-size: 1.5rem;
       }
     }
   </style>
