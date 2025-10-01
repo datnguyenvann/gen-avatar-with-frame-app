@@ -334,21 +334,17 @@
     // Các khung cố định - sử dụng SVG inline để tránh CORS
     const FRAME_DESIGNS = {
       gradient: `
-        <svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 501 501">
           <defs>
-            <linearGradient id="frameGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
-              <stop offset="50%" style="stop-color:#ffa500;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#ff1493;stop-opacity:1" />
-            </linearGradient>
+            <style>
+              .cls-1 {
+                fill: #f7941d;
+                stroke: #231f20;
+                stroke-miterlimit: 10;
+              }
+            </style>
           </defs>
-          <circle cx="250" cy="250" r="240" fill="none" stroke="url(#frameGradient)" stroke-width="20"/>
-          <circle cx="250" cy="250" r="220" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-          <circle cx="250" cy="250" r="260" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-          <circle cx="250" cy="30" r="5" fill="#fff"/>
-          <circle cx="470" cy="250" r="5" fill="#fff"/>
-          <circle cx="250" cy="470" r="5" fill="#fff"/>
-          <circle cx="30" cy="250" r="5" fill="#fff"/>
+          <path class="cls-1" d="m.5.5v500h500V.5H.5Zm250,433.83c-97.58,0-176.68-79.1-176.68-176.68S152.92,80.97,250.5,80.97s176.68,79.1,176.68,176.68-79.1,176.68-176.68,176.68Z"/>
         </svg>
       `,
       
