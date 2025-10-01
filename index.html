@@ -7,7 +7,31 @@
     * { box-sizing: border-box; }
     body { 
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-      margin: 0; 
+        <!-- Controls Section -->
+        <div class="section">
+          <h3>🎛️ Điều chỉnh ảnh</h3>
+          <div class="controls">
+            <div class="control-group">
+              <label>🖼️ Kiểu khung</label>
+              <div class="control-row">
+                <select id="frameSelect" class="slider" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                  <option value="gradient">Gradient nhiều màu</option>
+                  <option value="simple">Đơn giản</option>
+                  <option value="ornate">Trang trí</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="control-group">
+              <label>👁️ Hiển thị khung</label>
+              <button onclick="toggleFrame()" class="btn btn-secondary" id="frameToggle">
+                <span>👁️</span>
+                <span>Tắt khung</span>
+              </button>
+            </div>
+            
+            <div class="control-group">
+              <label>🔍 Kích thước</label>0; 
       padding: 20px; 
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
@@ -214,7 +238,7 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>🎨 Ghép khung avatar cho Zalo</h1>
+      <h1>🎨 Ghép khung avatar</h1>
     </div>
     
     <div class="main-content">
@@ -232,53 +256,20 @@
           </div>
         </div>
 
-        <!-- Fixed Frame Info Section -->
-        <div class="section">
-          <h3>🖼️ Khung cố định</h3>
-          <div style="text-align: center; color: #666; margin-bottom: 15px;">
-            <p>Sử dụng file khung local: <code>frame.svg</code></p>
-            <small>Đặt file khung trong cùng thư mục với index.html</small>
-            <small style="display: block; margin-top: 8px; color: #28a745;">✅ File mẫu đã được tạo sẵn</small>
-          </div>
-          <div style="text-align: center;">
-            <button onclick="toggleFrame()" class="btn btn-secondary" id="frameToggle">
-              <span>👁️</span>
-              <span>Tắt khung</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Frame Gallery Section -->
-        <!-- <div class="section">
-          <h3>🖼️ Chọn khung có sẵn</h3>
-          <div class="frame-gallery">
-            <div class="frame-option" data-frame="circular" style="background: linear-gradient(45deg, #ff6b6b, #ff8e53); border-radius: 50%;" title="Khung tròn"></div>
-            <div class="frame-option" data-frame="heart" style="background: linear-gradient(45deg, #ff6b9d, #c44569); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);" title="Khung trái tim"></div>
-            <div class="frame-option" data-frame="star" style="background: linear-gradient(45deg, #ffd700, #ff8c00); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);" title="Khung ngôi sao"></div>
-            <div class="frame-option" data-frame="diamond" style="background: linear-gradient(45deg, #00d2ff, #3a7bd5); clip-path: polygon(50% 0%, 80% 50%, 50% 100%, 20% 50%);" title="Khung kim cương"></div>
-            <div class="frame-option" data-frame="hexagon" style="background: linear-gradient(45deg, #a8edea, #fed6e3); clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);" title="Khung lục giác"></div>
-            <div class="frame-option" data-frame="rounded" style="background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 20px;" title="Khung bo góc"></div>
-          </div>
-        </div> -->
-
-        <!-- Upload Custom Frame Section -->
-        <!-- <div class="section upload-section">
-          <h3>📁 Khung tùy chỉnh</h3>
-          <div class="file-input-wrapper">
-            <input type="file" id="frameUpload" class="file-input" accept="image/*">
-            <button class="file-button">
-              <span>🖼️</span>
-              <span>Tải khung lên</span>
-            </button>
-          </div>
-        </div> -->
-
         <!-- Controls Section -->
         <div class="section">
           <h3>🎛️ Điều chỉnh ảnh</h3>
           <div class="controls">
             <div class="control-group">
-              <label>🔍 Kích thước</label>
+              <label>�️ Khung</label>
+              <button onclick="toggleFrame()" class="btn btn-secondary" id="frameToggle">
+                <span>👁️</span>
+                <span>Tắt khung</span>
+              </button>
+            </div>
+            
+            <div class="control-group">
+              <label>�🔍 Kích thước</label>
               <div class="control-row">
                 <input type="range" id="scaleSlider" class="slider" min="0.5" max="3" step="0.1" value="1">
                 <span id="scaleValue" class="value-display">100%</span>
@@ -326,6 +317,10 @@
     let frameImg = new Image();
     let userImgLoaded = false;
     let frameImgLoaded = false;
+    
+    // Set crossOrigin to avoid tainted canvas issues
+    userImg.crossOrigin = "anonymous";
+    frameImg.crossOrigin = "anonymous";
 
     // Transform properties
     let imgScale = 1;
@@ -336,12 +331,58 @@
     let lastMouseX = 0;
     let lastMouseY = 0;
 
-    // Khung cố định - sử dụng file local
-    // Đặt file khung trong cùng thư mục với index.html
-    const FIXED_FRAME_URL = "./frame.svg"; // Thay bằng tên file khung của bạn (có thể là .png, .jpg, .svg)
+    // Các khung cố định - sử dụng SVG inline để tránh CORS
+    const FRAME_DESIGNS = {
+      gradient: `
+        <svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+          <defs>
+            <linearGradient id="frameGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+              <stop offset="50%" style="stop-color:#ffa500;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#ff1493;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <circle cx="250" cy="250" r="240" fill="none" stroke="url(#frameGradient)" stroke-width="20"/>
+          <circle cx="250" cy="250" r="220" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+          <circle cx="250" cy="250" r="260" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          <circle cx="250" cy="30" r="5" fill="#fff"/>
+          <circle cx="470" cy="250" r="5" fill="#fff"/>
+          <circle cx="250" cy="470" r="5" fill="#fff"/>
+          <circle cx="30" cy="250" r="5" fill="#fff"/>
+        </svg>
+      `,
+      
+      simple: `
+        <svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+          <circle cx="250" cy="250" r="240" fill="none" stroke="#ff6b6b" stroke-width="15"/>
+        </svg>
+      `,
+      
+      ornate: `
+        <svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+          <defs>
+            <pattern id="pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="10" cy="10" r="2" fill="rgba(255,255,255,0.3)"/>
+            </pattern>
+          </defs>
+          <circle cx="250" cy="250" r="240" fill="none" stroke="#4a90e2" stroke-width="25"/>
+          <circle cx="250" cy="250" r="240" fill="url(#pattern)" stroke="none"/>
+          <circle cx="250" cy="250" r="215" fill="none" stroke="#fff" stroke-width="3"/>
+          <circle cx="250" cy="250" r="265" fill="none" stroke="rgba(74,144,226,0.5)" stroke-width="2"/>
+        </svg>
+      `
+    };
     
-    // Tải khung cố định ngay khi trang load
-    frameImg.src = FIXED_FRAME_URL;
+    // Khung mặc định
+    let currentFrame = 'gradient';
+    
+    // Tạo data URL từ SVG
+    function getFrameDataURL(frameName) {
+      return 'data:image/svg+xml;base64,' + btoa(FRAME_DESIGNS[frameName]);
+    }
+    
+    // Load khung cố định khi trang load
+    frameImg.src = getFrameDataURL(currentFrame);
     // Không cần crossOrigin cho file local
 
     // Khung PNG trong suốt (thay link ảnh PNG của bạn)
@@ -351,44 +392,72 @@
     // Biến để kiểm soát hiển thị khung
     let showFrame = true;
 
+    // Hàm thay đổi kiểu khung
+    function changeFrame(frameName) {
+      currentFrame = frameName;
+      frameImg.src = getFrameDataURL(frameName);
+    }
+
     // Hàm toggle khung
     function toggleFrame() {
       showFrame = !showFrame;
       const toggleBtn = document.getElementById('frameToggle');
       if (showFrame) {
         toggleBtn.innerHTML = '<span>👁️</span><span>Tắt khung</span>';
-        frameImgLoaded = true;
       } else {
         toggleBtn.innerHTML = '<span>🚫</span><span>Bật khung</span>';
-        frameImgLoaded = false;
       }
       draw();
     } 
 
-    // Xử lý click vào khung có sẵn
-    document.querySelectorAll('.frame-option').forEach(frameOption => {
-      frameOption.addEventListener('click', function() {
-        console.log('Frame clicked:', this.dataset.frame);
-        
-        // Bỏ selection cũ
-        document.querySelectorAll('.frame-option').forEach(opt => opt.classList.remove('selected'));
-        // Thêm selection mới
-        this.classList.add('selected');
-        
-        // Áp dụng frame style
-        const frameType = this.dataset.frame;
-        frameImgLoaded = false; // Reset frame image
-        applyFrameStyle(frameType);
-      });
-    });
-
-    function applyFrameStyle(frameType) {
-      // Áp dụng frame style và vẽ lại
-      selectedFrame = frameType;
+    // Thiết lập sự kiện onload cho frame cố định
+    frameImg.onload = function() {
+      frameImgLoaded = true;
+      console.log('Fixed SVG frame loaded successfully');
       draw();
+    };
+    
+    frameImg.onerror = function() {
+      console.error('Failed to load inline SVG frame');
+      frameImgLoaded = false;
+      draw();
+    };
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Vẽ ảnh avatar
+      if (userImgLoaded && userImg.complete) {
+        drawTransformedImage();
+      }
+      
+      // Vẽ khung từ file (nếu có và đang bật)
+      if (frameImgLoaded && frameImg.complete && showFrame) {
+        ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+      }
     }
 
-    let selectedFrame = null; 
+    function drawTransformedImage() {
+      ctx.save();
+      
+      // Di chuyển đến center + offset
+      const centerX = canvas.width / 2 + imgX;
+      const centerY = canvas.height / 2 + imgY;
+      ctx.translate(centerX, centerY);
+      
+      // Xoay
+      ctx.rotate(imgRotation);
+      
+      // Scale
+      ctx.scale(imgScale, imgScale);
+      
+      // Vẽ ảnh với center làm anchor point
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      ctx.drawImage(userImg, -imgWidth/2, -imgHeight/2, imgWidth, imgHeight);
+      
+      ctx.restore();
+    }
 
     // Canvas mouse events for dragging
     canvas.addEventListener('mousedown', startDrag);
@@ -446,8 +515,25 @@
 
     function endDrag() {
       isDragging = false;
-    } 
+    }
 
+    function downloadImage() {
+      try {
+        const link = document.createElement("a");
+        link.download = "avatar_zalo.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      } catch (error) {
+        if (error.name === 'SecurityError') {
+          alert('Không thể tải ảnh xuống do hạn chế bảo mật của trình duyệt. Điều này có thể xảy ra khi sử dụng file local. Vui lòng:\n\n1. Chạy trang web qua local server (Live Server extension)\n2. Hoặc chụp màn hình canvas để lưu ảnh');
+        } else {
+          console.error('Download error:', error);
+          alert('Có lỗi xảy ra khi tải ảnh xuống.');
+        }
+      }
+    }
+
+    // Event listener cho upload avatar
     document.getElementById("upload").addEventListener("change", function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -455,220 +541,19 @@
       reader.onload = function(evt) {
         userImg.onload = function() {
           userImgLoaded = true;
-          // Reset transform khi load ảnh mới
+          // Reset transform when loading new image
           resetTransform();
         };
+        // Use data URL from FileReader to avoid CORS issues
         userImg.src = evt.target.result;
       };
       reader.readAsDataURL(file);
     });
 
-    document.getElementById("frameUpload").addEventListener("change", function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      
-      // Bỏ selection khung có sẵn khi upload khung tùy chỉnh
-      document.querySelectorAll('.frame-option').forEach(opt => opt.classList.remove('selected'));
-      selectedFrame = null; // Reset CSS frame
-      
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        frameImg.onload = function() {
-          frameImgLoaded = true;
-          draw();
-        };
-        frameImg.src = evt.target.result;
-      };
-      reader.readAsDataURL(file);
+    // Event listener cho chọn kiểu khung
+    document.getElementById("frameSelect").addEventListener("change", function(e) {
+      changeFrame(e.target.value);
     });
-
-    // Thiết lập sự kiện onload cho frame mặc định
-    frameImg.onload = function() {
-      frameImgLoaded = true;
-      console.log('Fixed frame loaded successfully');
-      draw();
-    };
-    
-    frameImg.onerror = function() {
-      console.error('Failed to load local frame:', FIXED_FRAME_URL);
-      console.log('Hãy đảm bảo file khung đã được đặt trong cùng thư mục với index.html');
-      frameImgLoaded = false;
-      // Thử load frame backup nếu frame chính bị lỗi
-      frameImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Ccircle cx='250' cy='250' r='240' fill='none' stroke='%23ff6b6b' stroke-width='20'/%3E%3C/svg%3E";
-    };
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Vẽ ảnh avatar trước (nền)
-      if (userImgLoaded && userImg.complete) {
-        if (selectedFrame) {
-          // Áp dụng mask cho avatar theo frame được chọn
-          ctx.save();
-          applyFrameMask(selectedFrame);
-          drawTransformedImage();
-          ctx.restore();
-          
-          // Vẽ border frame
-          drawFrameBorder(selectedFrame);
-        } else {
-          drawTransformedImage();
-        }
-      }
-      
-      // Vẽ khung từ file (nếu có và đang bật)
-      if (frameImgLoaded && frameImg.complete && showFrame) {
-        ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
-      }
-    }
-
-    function drawTransformedImage() {
-      ctx.save();
-      
-      // Di chuyển đến center + offset
-      const centerX = canvas.width / 2 + imgX;
-      const centerY = canvas.height / 2 + imgY;
-      ctx.translate(centerX, centerY);
-      
-      // Xoay
-      ctx.rotate(imgRotation);
-      
-      // Scale
-      ctx.scale(imgScale, imgScale);
-      
-      // Vẽ ảnh với center làm anchor point
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      ctx.drawImage(userImg, -imgWidth/2, -imgHeight/2, imgWidth, imgHeight);
-      
-      ctx.restore();
-    }
-
-    function applyFrameMask(frameType) {
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const radius = Math.min(canvas.width, canvas.height) / 2 - 20;
-      
-      ctx.beginPath();
-      
-      switch(frameType) {
-        case 'circular':
-          ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-          break;
-        case 'heart':
-          drawHeartPath(centerX, centerY, radius * 0.8);
-          break;
-        case 'star':
-          drawStarPath(centerX, centerY, radius * 0.8, 5);
-          break;
-        case 'diamond':
-          drawDiamondPath(centerX, centerY, radius * 0.8);
-          break;
-        case 'hexagon':
-          drawHexagonPath(centerX, centerY, radius * 0.8);
-          break;
-        case 'rounded':
-          ctx.roundRect(centerX - radius, centerY - radius, radius * 2, radius * 2, 40);
-          break;
-        default:
-          ctx.rect(0, 0, canvas.width, canvas.height);
-      }
-      
-      ctx.clip();
-    }
-
-    function drawFrameBorder(frameType) {
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const radius = Math.min(canvas.width, canvas.height) / 2 - 20;
-      
-      ctx.strokeStyle = getFrameColor(frameType);
-      ctx.lineWidth = 8;
-      ctx.beginPath();
-      
-      switch(frameType) {
-        case 'circular':
-          ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-          break;
-        case 'heart':
-          drawHeartPath(centerX, centerY, radius * 0.8);
-          break;
-        case 'star':
-          drawStarPath(centerX, centerY, radius * 0.8, 5);
-          break;
-        case 'diamond':
-          drawDiamondPath(centerX, centerY, radius * 0.8);
-          break;
-        case 'hexagon':
-          drawHexagonPath(centerX, centerY, radius * 0.8);
-          break;
-        case 'rounded':
-          ctx.roundRect(centerX - radius, centerY - radius, radius * 2, radius * 2, 40);
-          break;
-      }
-      
-      ctx.stroke();
-    }
-
-    function getFrameColor(frameType) {
-      const colors = {
-        'circular': '#ff6b6b',
-        'heart': '#ff6b9d',
-        'star': '#ffd700',
-        'diamond': '#00d2ff',
-        'hexagon': '#a8edea',
-        'rounded': '#667eea'
-      };
-      return colors[frameType] || '#333';
-    }
-
-    function drawHeartPath(x, y, size) {
-      const heartPath = new Path2D();
-      heartPath.moveTo(x, y + size * 0.3);
-      heartPath.bezierCurveTo(x, y, x - size * 0.5, y, x - size * 0.5, y + size * 0.3);
-      heartPath.bezierCurveTo(x - size * 0.5, y + size * 0.7, x, y + size * 1.1, x, y + size * 1.1);
-      heartPath.bezierCurveTo(x, y + size * 1.1, x + size * 0.5, y + size * 0.7, x + size * 0.5, y + size * 0.3);
-      heartPath.bezierCurveTo(x + size * 0.5, y, x, y, x, y + size * 0.3);
-      ctx.arc = heartPath;
-      return ctx.fill(heartPath) || ctx.stroke(heartPath);
-    }
-
-    function drawStarPath(x, y, radius, points) {
-      const angle = Math.PI / points;
-      ctx.moveTo(x + Math.cos(0) * radius, y + Math.sin(0) * radius);
-      for (let i = 1; i <= points * 2; i++) {
-        const r = i % 2 === 0 ? radius : radius * 0.5;
-        const currentAngle = angle * i;
-        ctx.lineTo(x + Math.cos(currentAngle) * r, y + Math.sin(currentAngle) * r);
-      }
-      ctx.closePath();
-    }
-
-    function drawDiamondPath(x, y, size) {
-      ctx.moveTo(x, y - size);
-      ctx.lineTo(x + size, y);
-      ctx.lineTo(x, y + size);
-      ctx.lineTo(x - size, y);
-      ctx.closePath();
-    }
-
-    function drawHexagonPath(x, y, radius) {
-      for (let i = 0; i < 6; i++) {
-        const angle = (Math.PI / 3) * i;
-        const xPos = x + Math.cos(angle) * radius;
-        const yPos = y + Math.sin(angle) * radius;
-        if (i === 0) ctx.moveTo(xPos, yPos);
-        else ctx.lineTo(xPos, yPos);
-      }
-      ctx.closePath();
-    }
-
-    function downloadImage() {
-      const link = document.createElement("a");
-      link.download = "avatar_zalo.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    }
   </script>
 </body>
 </html>
