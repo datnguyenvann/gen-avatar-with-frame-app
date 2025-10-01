@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ghép khung avatar</title>
   <style>
     * { box-sizing: border-box; }
@@ -66,6 +67,7 @@
       border-radius: 15px;
       cursor: grab; 
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      touch-action: none; /* Prevent scrolling when touching canvas */
     }
     canvas:active { cursor: grabbing; }
     .frame-gallery { 
@@ -524,18 +526,297 @@
 
     function downloadImage() {
       try {
-        const link = document.createElement("a");
-        link.download = "avatar_zalo.png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
+        // Phát hiện thiết bị mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const dataUrl = canvas.toDataURL("image/png");
+        
+        if (isMobile) {
+          // Mobile: Sử dụng nhiều phương pháp để lưu ảnh
+          showMobileSaveOptions(dataUrl);
+        } else {
+          // Desktop: Download bình thường
+          const link = document.createElement("a");
+          link.download = "avatar_zalo_" + new Date().getTime() + ".png";
+          link.href = dataUrl;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+        
       } catch (error) {
         if (error.name === 'SecurityError') {
-          alert('Không thể tải ảnh xuống do hạn chế bảo mật của trình duyệt. Điều này có thể xảy ra khi sử dụng file local. Vui lòng:\n\n1. Chạy trang web qua local server (Live Server extension)\n2. Hoặc chụp màn hình canvas để lưu ảnh');
+          alert('❌ Không thể tải ảnh do hạn chế bảo mật.\n\n💡 Hãy chạy qua local server hoặc chụp màn hình.');
         } else {
           console.error('Download error:', error);
-          alert('Có lỗi xảy ra khi tải ảnh xuống.');
+          alert('❌ Có lỗi xảy ra khi tải ảnh.');
         }
       }
+    }
+
+    // Hiển thị tùy chọn lưu ảnh cho mobile
+    function showMobileSaveOptions(dataUrl) {
+      // Tạo modal overlay
+      const overlay = document.createElement('div');
+      overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      `;
+
+      // Tạo modal content
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 500px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      `;
+
+      const fileName = "avatar_zalo_" + new Date().getTime() + ".png";
+
+      modal.innerHTML = `
+        <h2 style="margin: 0 0 20px 0; color: #333;">📱 Lưu ảnh avatar</h2>
+        
+        <img src="${dataUrl}" style="
+          max-width: 100%; 
+          height: auto; 
+          border-radius: 15px; 
+          margin: 20px 0;
+          box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        ">
+        
+        <div style="
+          background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+          padding: 20px;
+          border-radius: 15px;
+          margin: 20px 0;
+          text-align: left;
+        ">
+          <h3 style="margin: 0 0 15px 0; text-align: center; color: #1565c0;">
+            🎯 Cách lưu ảnh vào thư viện:
+          </h3>
+          
+          <div style="
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+          ">
+            <h4 style="margin: 0 0 10px 0; color: #2e7d32;">📱 iPhone/iPad:</h4>
+            <p style="margin: 5px 0; line-height: 1.4;">
+              • <strong>Nhấn giữ ảnh phía trên</strong><br>
+              • Chọn <strong>"Lưu vào Ảnh"</strong><br>
+              • ✅ Ảnh sẽ có trong Thư viện ảnh
+            </p>
+          </div>
+          
+          <div style="
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #2196F3;
+          ">
+            <h4 style="margin: 0 0 10px 0; color: #1565c0;">🤖 Android:</h4>
+            <p style="margin: 5px 0; line-height: 1.4;">
+              • <strong>Nhấn giữ ảnh phía trên</strong><br>
+              • Chọn <strong>"Tải xuống"</strong> hoặc <strong>"Lưu ảnh"</strong><br>
+              • ✅ Ảnh sẽ có trong Gallery/Downloads
+            </p>
+          </div>
+        </div>
+        
+        <div style="margin: 25px 0;">
+          <button onclick="downloadDirect('${dataUrl}', '${fileName}')" style="
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            margin: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            min-width: 160px;
+          ">
+            📥 Tải xuống trực tiếp
+          </button>
+          
+          <button onclick="openImageInNewTab('${dataUrl}')" style="
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            margin: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+            min-width: 160px;
+          ">
+            🔗 Mở tab mới
+          </button>
+          
+          ${navigator.share ? `
+          <button onclick="shareImage('${dataUrl}', '${fileName}')" style="
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            margin: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+            min-width: 160px;
+          ">
+            📤 Chia sẻ
+          </button>
+          ` : ''}
+        </div>
+        
+        <button onclick="closeMobileModal()" style="
+          background: #f44336;
+          color: white;
+          padding: 12px 20px;
+          border: none;
+          border-radius: 20px;
+          font-size: 14px;
+          cursor: pointer;
+          margin-top: 15px;
+        ">
+          ❌ Đóng
+        </button>
+      `;
+
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
+
+      // Global functions for modal buttons
+      window.downloadDirect = function(dataUrl, fileName) {
+        try {
+          const link = document.createElement('a');
+          link.href = dataUrl;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // Show success message
+          showSuccessMessage('✅ Đã bắt đầu tải xuống! Kiểm tra thư mục Downloads.');
+        } catch (error) {
+          alert('❌ Không thể tải xuống tự động. Vui lòng nhấn giữ ảnh phía trên.');
+        }
+      };
+
+      window.openImageInNewTab = function(dataUrl) {
+        const newWindow = window.open();
+        newWindow.document.write(`
+          <html>
+            <head>
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Avatar Image</title>
+              <style>
+                body { margin: 0; padding: 20px; text-align: center; background: #f5f5f5; }
+                img { max-width: 100%; height: auto; border-radius: 15px; }
+                .tip { 
+                  background: #e3f2fd; 
+                  padding: 15px; 
+                  border-radius: 10px; 
+                  margin: 20px; 
+                  color: #1976d2; 
+                }
+              </style>
+            </head>
+            <body>
+              <h2>🎨 Avatar của bạn</h2>
+              <img src="${dataUrl}" alt="Avatar">
+              <div class="tip">
+                💡 <strong>Nhấn giữ ảnh</strong> để lưu vào thư viện!
+              </div>
+            </body>
+          </html>
+        `);
+        showSuccessMessage('🔗 Đã mở ảnh trong tab mới! Nhấn giữ ảnh để lưu.');
+      };
+
+      window.shareImage = async function(dataUrl, fileName) {
+        try {
+          const response = await fetch(dataUrl);
+          const blob = await response.blob();
+          const file = new File([blob], fileName, { type: 'image/png' });
+          
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: 'Avatar với khung',
+              text: 'Ảnh avatar của tôi',
+              files: [file]
+            });
+            showSuccessMessage('📤 Đã chia sẻ thành công!');
+          } else {
+            throw new Error('Cannot share files');
+          }
+        } catch (error) {
+          console.log('Sharing failed:', error);
+          alert('❌ Không thể chia sẻ. Vui lòng dùng tải xuống trực tiếp.');
+        }
+      };
+
+      window.closeMobileModal = function() {
+        document.body.removeChild(overlay);
+        // Clean up global functions
+        delete window.downloadDirect;
+        delete window.openImageInNewTab;
+        delete window.shareImage;
+        delete window.closeMobileModal;
+        delete window.showSuccessMessage;
+      };
+
+      window.showSuccessMessage = function(message) {
+        const successDiv = document.createElement('div');
+        successDiv.style.cssText = `
+          position: fixed;
+          top: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #4CAF50;
+          color: white;
+          padding: 15px 25px;
+          border-radius: 25px;
+          z-index: 10000;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          font-weight: 600;
+        `;
+        successDiv.textContent = message;
+        document.body.appendChild(successDiv);
+        
+        setTimeout(() => {
+          if (document.body.contains(successDiv)) {
+            document.body.removeChild(successDiv);
+          }
+        }, 3000);
+      };
+
+      // Close modal when clicking overlay
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+          window.closeMobileModal();
+        }
+      });
     }
 
     // Event listener cho upload avatar
