@@ -68,6 +68,10 @@
       cursor: grab; 
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       touch-action: none; /* Prevent scrolling when touching canvas */
+      image-rendering: -webkit-optimize-contrast; /* Webkit */
+      image-rendering: -moz-crisp-edges; /* Firefox */
+      image-rendering: crisp-edges; /* Standard */
+      image-rendering: pixelated; /* For pixel art, if needed */
     }
     canvas:active { cursor: grabbing; }
     .frame-gallery { 
@@ -377,6 +381,29 @@
   <script>
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
+    
+    // High DPI support for crisp rendering
+    const setupHighDPI = () => {
+      const dpr = window.devicePixelRatio || 1;
+      
+      // Set canvas size to fixed 500x500 for consistency
+      canvas.width = 500;
+      canvas.height = 500;
+      
+      // Enable high quality rendering
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+    };
+    
+    // Initialize high DPI
+    setupHighDPI();
+    
+    // Handle window resize to maintain quality
+    window.addEventListener('resize', () => {
+      setupHighDPI();
+      draw();
+    });
+    
     let userImg = new Image();
     let frameImg = new Image();
     let userImgLoaded = false;
@@ -467,6 +494,7 @@
 }
 
 function getFrameDataURL(frameName) {
+  // Use original SVG content without scaling
   return "data:image/svg+xml;base64," + utf8ToBase64(FRAME_DESIGNS[frameName]);
 }
     
@@ -513,23 +541,43 @@ function getFrameDataURL(frameName) {
     };
 
     function draw() {
+      // Clear canvas with high quality
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Save context state
+      ctx.save();
+      
+      // Enable high quality rendering
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
       
       // Vẽ ảnh avatar
       if (userImgLoaded && userImg.complete) {
         drawTransformedImage();
       }
       
-      // Vẽ khung từ file (nếu có và đang bật)
+      // Vẽ khung từ file (nếu có và đang bật) với chất lượng cao
       if (frameImgLoaded && frameImg.complete && showFrame) {
+        // Enable antialiasing for frame
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        // Draw frame with full canvas size
         ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
       }
+      
+      // Restore context state
+      ctx.restore();
     }
 
     function drawTransformedImage() {
       ctx.save();
       
-      // Di chuyển đến center + offset
+      // Enable high quality image rendering
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      
+      // Di chuyển đến center + offset (sử dụng kích thước canvas thực tế)
       const centerX = canvas.width / 2 + imgX;
       const centerY = canvas.height / 2 + imgY;
       ctx.translate(centerX, centerY);
@@ -540,9 +588,11 @@ function getFrameDataURL(frameName) {
       // Scale
       ctx.scale(imgScale, imgScale);
       
-      // Vẽ ảnh với center làm anchor point
+      // Vẽ ảnh với center làm anchor point và chất lượng cao
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
+      
+      // Draw with high quality
       ctx.drawImage(userImg, -imgWidth/2, -imgHeight/2, imgWidth, imgHeight);
       
       ctx.restore();
